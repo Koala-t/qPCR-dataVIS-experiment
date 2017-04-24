@@ -3,15 +3,14 @@
 window.onload = function () {
   var chart = new CanvasJS.Chart("chartContainer",
   {
+    zoomEnabled: true,
     title:{
     text: "qPCR Overview Chart"  
     },
     data: [
 
 
-
     <% wells.each do |well| %>
-
       // make an array for each well
       <% well_data = [] %>
       // populate the array with it's cycle results
@@ -21,6 +20,7 @@ window.onload = function () {
       // return each well array into the svg element (line 48)
       {
         type: "line",
+        toolTipContent: "<%= well.name %>  cycle: {x}, fluorescence: {y}",
         dataPoints: <%= well_data.to_json.html_safe %>
       },
     <% end %>
