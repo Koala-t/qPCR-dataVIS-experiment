@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TestApp</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+
+    <% selectables = [] %>
+    <% i = 1 %>
+    <% while selectables.length < 16 %>
+      <% selectables << ['Row:' + i.to_s, i] %>
+      <% i += 1 %>
+    <% end %>
+
+    <form action="/wells/:id" method="get">
+      <%= select_tag(:row_number, options_for_select(selectables,1)) %>
+      <input type="submit" value="Submit">
+    </form>
+
+    <%= yield %>
+  </body>
+</html>

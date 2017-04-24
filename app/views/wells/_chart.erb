@@ -1,0 +1,176 @@
+<h1>CHART</h1>
+
+<div id="test1">
+  <svg></svg>
+</div>
+
+<!--
+  Creating the data structure that will allow d3 to make the chart
+  add an array to the data array for each well
+  add an array for the cycle and fluorescence at each cycle for each well
+
+<% data = [] %>
+
+<% wells.find_each do |well| %>
+  <% data << [] %>
+<% end %>
+
+<% results.find_each do |result| %>
+  <% data[result.well_id - 1] << [result.cycle, result.fluorescence] %>
+<% end %>
+-->
+
+<script src="http://mbostock.github.com/d3/d3.v2.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<!-- <script src="nvtooltip.js"></script>
+<script src="d3legend.js"></script> 
+<script src="d3line.js"></script> 
+<script src="d3linewithlegend.js"></script>  
+These aren't needed because I put the js files in the right place!
+-->
+<script>
+
+function log(text) {
+  if (console && console.log) console.log(text);
+  return text;
+}
+
+$(document).ready(function() {
+  var margin = {top: 30, right: 10, bottom: 50, left: 60},
+      chart = d3LineWithLegend()
+                .xAxis.label('cycle')
+                .width(width(margin))
+                .height(height(margin))
+                .yAxis.label('fluorescence');
+
+
+  var svg = d3.select('#test1 svg')
+      .datum(generateData())
+
+  svg.transition().duration(500)
+      .attr('width', width(margin))
+      .attr('height', height(margin))
+      .call(chart);
+
+
+  chart.dispatch.on('showTooltip', function(e) {
+  var offset = $('#test1').offset(), // { left: 0, top: 0 }
+        left = e.pos[0] + offset.left,
+        top = e.pos[1] + offset.top
+
+    var content = '<h3>' + e.series.label + '</h3>' +
+                  '<p>' +
+                  '<span class="value">[cycle: ' + e.point[0] + ', fluorescence: ' + e.point[1] + ']</span>' +
+                  '</p>';
+
+    nvtooltip.show([left, top], content);
+  });
+
+  chart.dispatch.on('hideTooltip', function(e) {
+    nvtooltip.cleanup();
+  });
+
+
+
+
+  $(window).resize(function() {
+    var margin = chart.margin();
+
+    chart
+      .width(width(margin))
+      .height(height(margin));
+
+    d3.select('#test1 svg')
+      .attr('width', width(margin))
+      .attr('height', height(margin))
+      .call(chart);
+
+    });
+
+
+
+
+  function width(margin) {
+    var w = $(window).width() - 20;
+
+    return ( (w - margin.left - margin.right - 20) < 0 ) ? margin.left + margin.right + 2 : w;
+  }
+
+  function height(margin) {
+    var h = $(window).height() - 20;
+
+    return ( h - margin.top - margin.bottom - 20 < 0 ) ? 
+              margin.top + margin.bottom + 2 : h;
+  }
+
+    //data
+  function generateData() {
+    // var sin = [],
+    //     sin2 = [],
+    //     cos = [],
+    //     cos2 = [],
+    //     r1 = Math.random(),
+    //     r2 = Math.random(),
+    //     r3 = Math.random(),
+    //     r4 = Math.random();
+
+    // for (var i = 0; i < 100; i++) {
+    //   sin.push([ i, r1 * Math.sin( r2 +  i / (10 * (r4 + .5) ))]);
+    //   cos.push([ i, r2 * Math.cos( r3 + i / (10 * (r3 + .5) ))]);
+    //   sin2.push([ i, r3 * Math.sin( r1 + i / (10 * (r2 + .5) ))]);
+    //   cos2.push([ i, r4 * Math.cos( r4 + i / (10 * (r1 + .5) ))]);
+    // }
+
+    // send the necessary info through the D3 functions
+    // return data where each point has a [cycle, fluorescence] format
+    // <% currentWell = 1 %>
+    return [
+      // <% data.each do |well| %>
+      // <% wellName = wells.find(currentWell).name.to_str %>
+      //   {
+      //     data: <%= well %>,
+      //     label: "<%= wellName %>"
+      //   },
+      //   <% currentWell += 1 %>
+      // <% end %>
+
+      <% wells.each do |well| %>
+        // the next 2 lines limit the chart to just row 1
+        <% if !regex || regex.match(well.name) %>
+
+          // make an array for each well
+          <% well_data = [] %>
+          // populate the array with it's cycle results
+          <% results.where(well_id: well.id).each do |result| %>
+            <% well_data << [result.cycle, result.fluorescence] %>
+          <% end %>
+          // return each well array into the svg element (line 48)
+          {
+            data: <%= well_data %>,
+            label: "<%= well.name %>"
+          },
+        <% end %>
+      <% end %>
+
+      // {
+      //   data: sin,
+      //   label: "Sine Wave"
+      // },
+      // {
+      //   data: cos,
+      //   label: "Cosine Wave"
+      // },
+      // {
+      //   data: sin2,
+      //   label: "Sine2 Wave"
+      // },
+      // {
+      //   data: cos2,
+      //   label: "Cosine2 Wave"
+      // }
+    ];
+  }
+
+});
+
+</script>

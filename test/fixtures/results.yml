@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cycle: 1
+  fluorescence: 1
+
+two:
+  cycle: 1
+  fluorescence: 1

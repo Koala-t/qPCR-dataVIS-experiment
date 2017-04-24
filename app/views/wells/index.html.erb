@@ -1,0 +1,49 @@
+<h1>Wells page</h1>
+
+<%= render partial: 'chart', locals: {results: @results, wells: @wells, regex: @regex} %>
+
+<table>
+  <tr>
+    <th>Well</th>
+    <% 40.times do |i| %>
+      <th>
+        (cycle <%= i + 1 %>)
+      </th>
+    <% end %>
+  </tr>
+  <% @wells.each do |well| %>
+    <!-- this will specifically select only row 1 -->
+    <% #regex = /\Arow:1[|]/ %>
+    <% if !@regex || @regex.match(well.name) %>
+      <tr>
+        <td> 
+          <%= well.name %> 
+        </td>
+        <% @specific_results = @results.where(well_id: well.id) %>
+        <% @specific_results.each do |result| %>
+          <td>
+            <%= result.fluorescence %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  <% end %>
+</table>
+
+<!-- <ul>
+  <% @wells.each do |well| %>
+    <li >
+      <%= well.name %>
+    </li>
+  <% end %>
+</ul>
+
+<ul>
+  <% @results.each do |result| %>
+    <li >
+      <%= result.well_id %>
+      <%= result.cycle %>
+      <%= result.fluorescence %>
+    </li>
+  <% end %>
+</ul> -->
